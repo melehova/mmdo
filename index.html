@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
+    <script src="https://unpkg.com/mathlive"></script>
+    <script type="module" src="./scripts/script.js"></script>
+    <title>VM Calculator</title>
+</head>
+
+<body>
+    <math-field id="formula" virtual-keyboard-mode="manual">
+        f\left(x\right)=\left(10-x\right)^2+3
+    </math-field>
+    <textarea hidden id="latex"></textarea>
+    <label for="result">If x = 5</label>
+    <textarea id="result"></textarea>
+</body>
+
+</html>
