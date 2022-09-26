@@ -3,14 +3,18 @@ import { ComputeEngine } from
 const ce = new ComputeEngine();
 
 const getFunctionValue = (func, x) => { // get mathf and x
-    if (!func || !x)
-        return false
+    // get ce object
     let expr = ce.parse(func.value)
-    console.log(expr.json);
+    // replace variable x with value
     expr = expr.subs({ x: ce.box(x) });
-    console.log(`Substitute x -> ${x}\t`, expr.json);
-    console.log("Numerical Evaluation\t", expr.latex);
-    return expr
+    // get result`s slice
+    let equal = expr.json.slice(1, expr.json.length - 1)
+    // tranform slice to ce object
+    let eqExpr = ce.parse(ce.serialize(equal[0]))
+    // get result value
+    let res = parseFloat(eqExpr.N().latex)
+    // console.log(x, equal, res)
+    return !isNaN(res) ? res : null
 }
 
 export default getFunctionValue

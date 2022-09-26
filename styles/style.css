@@ -1,0 +1,9 @@
+#result-description {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+#result-description > div {
+    width: 50%;
+}
