@@ -1,3 +1,8 @@
+/* body, textarea, input {
+    background-color: #fefbf6;
+    color: black;
+} */
+
 #result-description {
     display: flex;
     flex-direction: row;
@@ -6,4 +11,10 @@
 
 #result-description > div {
     width: 50%;
+}
+
+.plots {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }

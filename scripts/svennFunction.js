@@ -99,7 +99,7 @@ export default (...args) => { // func, start point, step, max num of points
                 break // > 11 stop
         }
     }
-    console.log(X, F)
+    // console.log(X, F)
     let div = document.querySelector('div#result-description')
     let ret = {
         i: i,
