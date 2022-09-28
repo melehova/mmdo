@@ -15,15 +15,19 @@
 
 <body>
     <math-field id="formula" virtual-keyboard-mode="manual">
-        f\left(x\right)=\left(10-x\right)^2+3
+        <!-- f\left(x\right)=\left(10-x\right)^2+3 -->
     </math-field>
     <textarea id="latex"></textarea><br>
     <label for="test">При значенні змінної x = 0, значення функціїї =</label>
     <textarea id="test"></textarea><br><br>
     <label for="start">Start point</label>
-    <input type="number" id="start" value="-3"><br><br>
+    <!-- <input type="number" id="start" value="-3"><br><br> -->
+    <input type="number" id="start"><br><br>
+
     <label for="step">Step</label>
-    <input type="number" id="step" value="3">
+    <!-- <input type="number" id="step" value="3"> -->
+    <input type="number" id="step">
+
     <table id="results"></table>
     <div id="result-description"></div>
     <div class="plots">

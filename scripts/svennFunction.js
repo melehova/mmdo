@@ -22,11 +22,18 @@ const createRow = (...args) => {
     return tr
 }
 
+const removeChildren = (parent) => {
+    while (parent.firstChild) {
+        parent.firstChild.remove()
+    }
+}
+
 export default (...args) => { // func, start point, step, max num of points 
     // desctructurising of args
     let [func, c, h, N] = [...args];
     // init variables
     const table = document.querySelector('table#results')
+    removeChildren(table)
     // table.appendChild(createCell('th', 'a', 'b', 'c'))
     let b = 0, a = 0, fa = 0, fb = 0, fc = 0, i = 0, X = [], F = [];
     // simplify function call
@@ -41,7 +48,7 @@ export default (...args) => { // func, start point, step, max num of points
     if (args.length !== 4)
         return null
     for (let arg of args) {
-        if (typeof arg === 'undefined' || arg === null)
+        if (typeof arg === 'undefined' || arg === null || arg === 'NaN')
             return null
     }
     
@@ -101,6 +108,7 @@ export default (...args) => { // func, start point, step, max num of points
     }
     // console.log(X, F)
     let div = document.querySelector('div#result-description')
+    removeChildren(div)
     let ret = {
         i: i,
         h: h,
