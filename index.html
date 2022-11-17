@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>MMDO</title>
+    <style>
+        html {
+            padding: 0;
+            margin: 0;
+        }
+
+        * {
+            font-family: 'Nunito';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 18px;
+        }
+
+        form {
+            margin-left: auto;
+            margin-right: auto;
+            width: 70%;
+            background-color: #FFFFFF;
+            overflow-y: scroll;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: stretch;
+            padding: 41px 30px;
+            gap: 15px;
+            background: #FFFFFF;
+        }
+
+        /* width */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        button {
+            font-weight: 600;
+            line-height: 25px;
+            color: #FFFFFF;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.25);
+            border-radius: 16px;
+            width: max-content;
+
+            padding: 8px 72px;
+            background: #1A367F;
+            border: none;
+            outline: none;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        input,
+        select {
+            padding: 10px 15px;
+            background: #FFFFFF;
+            border: 1px solid #D5D8DE;
+            border-radius: 4px;
+        }
+
+        .input-hint {
+            font-size: smaller;
+            opacity: 50%;
+            padding-left: 15px;
+            width: 100%;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .w-100 {
+            width: 100%;
+        }
+
+        label {
+            padding-left: 15px;
+        }
+
+        pre {
+            white-space: pre-wrap;
+        }
+    </style>
+
+    <script type="text/javascript">
+        function setup(htmlComponent) {
+            htmlComponent.addEventListener("DataChanged", function (event) {
+                document.getElementById('console').innerText = JSON.parse(htmlComponent.Data)['text']
+            });
+            const getValueById = (id) => {
+                return document.querySelector(`#${id}`).value
+            }
+            document.forms['main'].addEventListener('submit', (event) => {
+                event.preventDefault();
+                let data = JSON.parse(htmlComponent.Data)
+                data.btnClicked = true
+                data.formData = {
+                    function: getValueById('function'),
+                    start: parseFloat(getValueById('start')),
+                    step: parseFloat(getValueById('step')),
+                    num: parseInt(getValueById('num')),
+                    epsilon: parseFloat(getValueById('epsilon')),
+                    delta: parseFloat(getValueById('delta')),
+                    method: getValueById('method'),
+                }
+                updateData(data)
+            })
+            document.getElementById('method').addEventListener('change', (e) => {
+                console.log(e)
+                if (e.target.value === 'metDichotomy') {
+                    document.getElementById('delta').setAttribute('required', 'required')
+                } else {
+                    document.getElementById('delta').removeAttribute('required')
+                }
+            })
+
+            function updateData(newData) {
+                htmlComponent.Data = JSON.stringify(newData);
+            }
+        }
+
+        // document.addEventListener("DOMContentLoaded", () => {
+        //     const getValueObjectById = (id) => {
+        //         return {id: document.querySelector(`#${id}`).value}
+        //     }
+        //    console.log(getValueObjectById('function'))
+        //     console.log(document.forms['main'])
+
+        //     document.forms['main'].addEventListener('submit', (event) => {
+        //         event.preventDefault();
+        //         // let data = JSON.parse(htmlComponent)
+        //         let data = {}
+        //         data.btnClicked = true
+        //         data.formData = {
+        //             function: document.querySelector('#function')
+        //         }
+        //         console.log(data)
+
+        //         // updateData(data)
+        //         return false
+        //     })
+
+            // document.getElementById('console').value = 'okeeey'
+
+        //     document.getElementById('method').addEventListener('change', (e) => {
+        //         console.log(e)
+        //         if (e.target.value === 'metDichotomy') {
+        //             document.getElementById('delta').setAttribute('required', 'required')
+        //         } else {
+        //             document.getElementById('delta').removeAttribute('required')
+        //         }
+        //     })
+        // });
+
+
+    </script>
+</head>
+
+<body>
+    <form name="main">
+        <div class="input-group">
+            <input class='w-100' type="text" id='function' placeholder="Введіть функцію.." value='(10 - x)^2 + 3' required>
+            <div class="input-hint">Приклад вводу (10 - x)^2 + 3</div>
+        </div>
+        <div class="input-group">
+            <label for="start">Початкова точка</label>
+            <input type="number" id="start" name="start" step=any value='-3' required>
+        </div>
+        <div class="input-group">
+            <label for="step">Початковий крок</label>
+            <input type="number" id="step" name="step" step=any value='3' required>
+        </div>
+        <div class="input-group">
+            <label for="num">Гранична кількість точок</label>
+            <input type="number" id="num" name="num" value='100' required>
+        </div>
+        <div class="input-group">
+            <label for="epsilon">Допустима похибка</label>
+            <input type="number" id="epsilon" name="epsilon" step=any value='0.01' required>
+        </div>
+        <div class="input-group">
+            <label for="delta">Відстань точок від центру інтервалу</label>
+            <input type="number" id="delta" name="delta" step=any value='0.001' >
+            <div class="input-hint">Для метода дихотомії</div>
+        </div>
+        <div class="input-group">
+            <select required name="method" id="method">
+                <option disabled selected >Оберіть метод</option>
+                <option value="metDichotomy">Метод дихотомії</option>
+                <option value="metD2">Метод ділення навпіл</option>
+                <option value="metGoldenSection">Метод золотого перетину</option>
+                <option value="metStepAdaptation">Метод адаптації кроку</option>
+            </select>
+        </div>
+
+        <button class="primary" id="button" type="submit">Розрахувати</button>
+        <pre id="console"></pre>
+    </form>
+
+</body>
+
+</html>
