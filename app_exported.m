@@ -24,6 +24,10 @@ classdef app_exported < matlab.apps.AppBase
                 case 'metDichotomy'
                     [P,F,i,a,b] = metSvenn(fun,fD.start,fD.step,fD.num);
                     [P,F,i,x,fx] = metDichotomy(fun,P,F,i,a,b,fD.delta,fD.epsilon);
+                case 'metI3p4'
+                    [P,F,i,a,b,c,fa,fb,fc] = metSvenn(fun,fD.start,fD.step,fD.num);
+                    % Виклик метода кубічної інтерполяції з 4 точками
+                    [P,F,i,x,fx] = metI3p4(fun,P,F,i,a,b,c,fa,fb,fc,fD.epsilon);
                 otherwise
                     method = str2func(fD.method);
                     [P,F,i,a,b] = metSvenn(fun,fD.start,fD.step,fD.num);
