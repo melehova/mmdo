@@ -7,6 +7,7 @@
         html {
             padding: 0;
             margin: 0;
+            background-color: #D5D8DE;
         }
 
         * {
@@ -16,19 +17,24 @@
             font-size: 18px;
         }
 
-        form {
+        div#main {
+            box-sizing: border-box;
+            margin-top: 40px;
+            padding-top: 40px;
             margin-left: auto;
             margin-right: auto;
             width: 70%;
-            background-color: #FFFFFF;
-            overflow-y: scroll;
-            display: flex;
+            background: #FFFFFF;
+            /* overflow-y: scroll; */
+        }
+
+        form {
+            display: none;
             flex-direction: column;
             justify-content: center;
             align-items: stretch;
             padding: 41px 30px;
             gap: 15px;
-            background: #FFFFFF;
         }
 
         /* width */
@@ -55,16 +61,27 @@
             font-weight: 600;
             line-height: 25px;
             color: #FFFFFF;
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.25);
             border-radius: 16px;
             width: max-content;
 
             padding: 8px 72px;
-            background: #1A367F;
+            background: #005B52;
             border: none;
             outline: none;
             margin-left: auto;
             margin-right: auto;
+        }
+
+        .primary {
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.25);
+        }
+
+        button:hover {
+            box-shadow: inset 0px 0px 500px rgba(0, 0, 0, 0.15);
+        }
+
+        button:active {
+            box-shadow: inset 0px 0px 500px rgba(0, 0, 0, 0.25);
         }
 
         input,
@@ -101,123 +118,309 @@
         pre {
             white-space: pre-wrap;
         }
+
+        .header {
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0px 20px;
+            gap: 10px;
+            width: 100%;
+            height: 44px;
+        }
+
+        .header>h1 {
+            font-weight: 700;
+            font-size: 18px;
+            line-height: 25px;
+            text-align: center;
+            text-transform: uppercase;
+            color: #005B52;
+        }
+
+        .btn-header {
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            padding: 10px;
+            gap: 10px;
+            width: max-content;
+            /* height: 39px; */
+            background: #FFFFFF;
+            border: 0.5px solid #00554D;
+            border-radius: 10px;
+            font-weight: 300;
+            font-size: 14px;
+            line-height: 19px;
+            text-transform: uppercase;
+            color: #005B52;
+            cursor: pointer;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            padding: 0px;
+            gap: 15px;
+        }
+
+        .btn-header.active {
+            background: #005B52;
+            color: #fff;
+        }
     </style>
 
     <script type="text/javascript">
         function setup(htmlComponent) {
+            const forms = document.querySelectorAll('form')
+            
             htmlComponent.addEventListener("DataChanged", function (event) {
-                document.getElementById('console').innerText = JSON.parse(htmlComponent.Data)['text']
+                const data = JSON.parse(htmlComponent.Data)
+                forms.forEach(f => {
+                    if (f.name === data.funcType) {
+                        f.classList.add('active')
+                        document.querySelector(`form[name=${f.name}]`).style.display = 'flex'
+                    } else {
+                        f.classList.remove('active')
+                        document.querySelector(`form[name=${f.name}]`).style.display = 'none'
+                    }
+                })
+                document.querySelector(`form[name=${data.funcType}] #console`).innerText = data.text
             });
-            const getValueById = (id) => {
-                return document.querySelector(`#${id}`).value
-            }
-            document.forms['main'].addEventListener('submit', (event) => {
-                event.preventDefault();
-                let data = JSON.parse(htmlComponent.Data)
-                data.btnClicked = true
-                data.formData = {
-                    function: getValueById('function'),
-                    start: parseFloat(getValueById('start')),
-                    step: parseFloat(getValueById('step')),
-                    num: parseInt(getValueById('num')),
-                    epsilon: parseFloat(getValueById('epsilon')),
-                    delta: parseFloat(getValueById('delta')),
-                    method: getValueById('method'),
-                }
-                updateData(data)
-            })
-            document.getElementById('method').addEventListener('change', (e) => {
-                console.log(e)
-                if (e.target.value === 'metDichotomy') {
-                    document.getElementById('delta').setAttribute('required', 'required')
-                } else {
-                    document.getElementById('delta').removeAttribute('required')
-                }
+
+            forms.forEach(form => {
+                form.addEventListener('submit', (event) => {
+                    const getValueById = (id) => {
+                        return document.querySelector(`form[name=${form.name}] #${id}`).value
+                    }
+                    event.preventDefault();
+                    let data = JSON.parse(htmlComponent.Data)
+                    data.btnClicked = true
+                    data.funcType = form.name
+                    data.formData = {
+                        function: getValueById('function'),
+                        start: parseFloat(getValueById('start')),
+                        step: parseFloat(getValueById('step')),
+                        num: parseInt(getValueById('num')),
+                        epsilon: parseFloat(getValueById('epsilon')),
+                        delta: parseFloat(getValueById('delta')),
+                        method: getValueById('method'),
+                    }
+                    if (form.name === "mult-dem") {
+                        data.formData.start = getValueById('start').split(' ').map(el => parseFloat(el)),
+                        data.formData.epsilonm = parseFloat(getValueById('epsilonm'))
+                        data.formData.multMethod = getValueById('mult-method')
+                    }
+                    updateData(data)
+                })
+
+                form.querySelector('#method').addEventListener('change', (e) => {
+                    if (e.target.value === 'metDichotomy' || e.target.value === 'metDichotomyM') {
+                        document.querySelector(`form[name=${form.name}] #delta`).setAttribute('required', 'required')
+                    } else {
+                        document.querySelector(`form[name=${form.name}] #delta`).removeAttribute('required')
+                    }
+                })
             })
 
+           
             function updateData(newData) {
                 htmlComponent.Data = JSON.stringify(newData);
             }
+
+            const headButtons = document.querySelectorAll('.btn-header')
+
+            headButtons.forEach(btn => {
+                if (btn.classList.contains('active')) {
+                    document.querySelector(`form[name=${btn.id}]`).style.display = 'flex'
+                }
+                btn.addEventListener('click', (e) => {
+                    headButtons.forEach(b => {
+                        if (b.id !== e.target.id) {
+                            b.classList.remove('active')
+                            document.querySelector(`form[name=${b.id}]`).style.display = 'none'
+                        }
+                        else {
+                            b.classList.add('active')
+                            document.querySelector(`form[name=${b.id}]`).style.display = 'flex'
+                        }
+                    })
+                })
+            })
         }
 
-        // document.addEventListener("DOMContentLoaded", () => {
-        //     const getValueObjectById = (id) => {
-        //         return {id: document.querySelector(`#${id}`).value}
-        //     }
-        //    console.log(getValueObjectById('function'))
-        //     console.log(document.forms['main'])
+        document.addEventListener("DOMContentLoaded", () => {
 
-        //     document.forms['main'].addEventListener('submit', (event) => {
-        //         event.preventDefault();
-        //         // let data = JSON.parse(htmlComponent)
-        //         let data = {}
-        //         data.btnClicked = true
-        //         data.formData = {
-        //             function: document.querySelector('#function')
-        //         }
-        //         console.log(data)
+            const forms = document.querySelectorAll('form')
+            forms.forEach(form => {
+                form.addEventListener('submit', (event) => {
+                    const getValueById = (id) => {
+                        console.log(`form[name=${form.name}] #${id}`, document.querySelector(`form[name=${form.name}] #${id}`))
+                        return document.querySelector(`form[name=${form.name}] #${id}`)?.value
+                    }
+                    event.preventDefault();
+                    // let data = JSON.parse(htmlComponent.Data)
+                    let data = []
+                    data.btnClicked = true
+                    data.funcType = form.name
+                    data.formData = {
+                        function: getValueById('function'),
+                        start: parseFloat(getValueById('start')),
+                        step: parseFloat(getValueById('step')),
+                        num: parseInt(getValueById('num')),
+                        epsilon: parseFloat(getValueById('epsilon')),
+                        delta: parseFloat(getValueById('delta')),
+                        method: getValueById('method'),
+                    }
+                    if (form.name === "mult-dem") {
+                        data.formData.start = getValueById('start').split(' ').map(el => parseFloat(el)),
+                            data.formData.epsilonm = getValueById('epsilonm')
+                        data.formData.multMethod = getValueById('mult-method')
+                    }
+                    // updateData(data)
+                })
 
-        //         // updateData(data)
-        //         return false
-        //     })
+                form.querySelector('#method').addEventListener('change', (e) => {
+                    if (e.target.value === 'metDichotomy' || e.target.value === 'metDichotomyM') {
+                        document.querySelector(`form[name=${form.name}] #delta`).setAttribute('required', 'required')
+                    } else {
+                        document.querySelector(`form[name=${form.name}] #delta`).removeAttribute('required')
+                    }
+                })
+            })
 
-            // document.getElementById('console').value = 'okeeey'
+            const headButtons = document.querySelectorAll('.btn-header')
 
-        //     document.getElementById('method').addEventListener('change', (e) => {
-        //         console.log(e)
-        //         if (e.target.value === 'metDichotomy') {
-        //             document.getElementById('delta').setAttribute('required', 'required')
-        //         } else {
-        //             document.getElementById('delta').removeAttribute('required')
-        //         }
-        //     })
-        // });
+            headButtons.forEach(btn => {
+                if (btn.classList.contains('active')) {
+                    document.querySelector(`form[name=${btn.id}]`).style.display = 'flex'
+                }
+                btn.addEventListener('click', (e) => {
+                    headButtons.forEach(b => {
+                        if (b.id !== e.target.id) {
+                            b.classList.remove('active')
+                            document.querySelector(`form[name=${b.id}]`).style.display = 'none'
+                        }
+                        else {
+                            b.classList.add('active')
+                            document.querySelector(`form[name=${b.id}]`).style.display = 'flex'
+                        }
+                    })
+                })
+            })
+        });
 
 
     </script>
 </head>
 
 <body>
-    <form name="main">
-        <div class="input-group">
-            <input class='w-100' type="text" id='function' placeholder="Введіть функцію.." value='(10 - x)^2 + 3' required>
-            <div class="input-hint">Приклад вводу (10 - x)^2 + 3</div>
+    <div id="main">
+        <div class="header">
+            <h1>Мінімізація</h1>
+            <div class="btn-group">
+                <button class="btn-header active" id="one-dem">Одновимірна</button>
+                <button class="btn-header" id="mult-dem">Багатовимірна</button>
+            </div>
         </div>
-        <div class="input-group">
-            <label for="start">Початкова точка</label>
-            <input type="number" id="start" name="start" step=any value='-3' required>
-        </div>
-        <div class="input-group">
-            <label for="step">Початковий крок</label>
-            <input type="number" id="step" name="step" step=any value='3' required>
-        </div>
-        <div class="input-group">
-            <label for="num">Гранична кількість точок</label>
-            <input type="number" id="num" name="num" value='100' required>
-        </div>
-        <div class="input-group">
-            <label for="epsilon">Допустима похибка</label>
-            <input type="number" id="epsilon" name="epsilon" step=any value='0.01' required>
-        </div>
-        <div class="input-group">
-            <label for="delta">Відстань точок від центру інтервалу</label>
-            <input type="number" id="delta" name="delta" step=any value='0.001' >
-            <div class="input-hint">Для метода дихотомії</div>
-        </div>
-        <div class="input-group">
-            <select required name="method" id="method">
-                <option disabled selected >Оберіть метод</option>
-                <option value="metDichotomy">Метод дихотомії</option>
-                <option value="metD2">Метод ділення навпіл</option>
-                <option value="metGoldenSection">Метод золотого перетину</option>
-                <option value="metStepAdaptation">Метод адаптації кроку</option>
-                <option value="metI3p4">Метод кубічної інтерполяції з чотирма точками</option>
-            </select>
-        </div>
+        <form name="one-dem">
+            <div class="input-group">
+                <input class='w-100' type="text" id='function' placeholder="Введіть функцію.." value='(10 - x)^2 + 3'
+                    required>
+                <div class="input-hint">Приклад вводу (10 - x)^2 + 3</div>
+            </div>
+            <div class="input-group">
+                <label for="start">Початкова точка</label>
+                <input type="number" id="start" name="start" step=any value='-3' required>
+            </div>
+            <div class="input-group">
+                <label for="step">Початковий крок</label>
+                <input type="number" id="step" name="step" step=any value='3' required>
+            </div>
+            <div class="input-group">
+                <label for="num">Гранична кількість точок</label>
+                <input type="number" id="num" name="num" value='100' required>
+            </div>
+            <div class="input-group">
+                <label for="epsilon">Допустима похибка</label>
+                <input type="number" id="epsilon" name="epsilon" step=any value='0.01' required>
+            </div>
+            <div class="input-group">
+                <label for="delta">Відстань точок від центру інтервалу</label>
+                <input type="number" id="delta" name="delta" step=any value='0.001'>
+                <div class="input-hint">Для метода дихотомії</div>
+            </div>
+            <div class="input-group">
+                <select required name="method" id="method">
+                    <option disabled selected value>Оберіть метод</option>
+                    <option value="metDichotomy">Метод дихотомії</option>
+                    <option value="metD2">Метод ділення навпіл</option>
+                    <option value="metGoldenSection">Метод золотого перетину</option>
+                    <option value="metStepAdaptation">Метод адаптації кроку</option>
+                    <option value="metI3p4">Метод кубічної інтерполяції з чотирма точками</option>
+                </select>
+            </div>
 
-        <button class="primary" id="button" type="submit">Розрахувати</button>
-        <pre id="console"></pre>
-    </form>
+            <button class="primary btn" type="submit">Розрахувати</button>
+            <pre id="console"></pre>
+        </form>
+        <form name="mult-dem">
+            <div class="input-group">
+                <input class='w-100' type="text" id='function' placeholder="Введіть функцію.." value='(x(1)-1)^2+x(2)^2'
+                    required>
+                <div class="input-hint">Приклад вводу 0.5*x(1)*x(1)+x(2)*x(2)-x(1)*x(2)+4*x(1)-8*x(2)+12</div>
+            </div>
+            <div class="input-group">
+                <label for="start">Початкова точка</label>
+                <input type="text" id="start" name="start" step=any value='-4 5' required>
+                <div class="input-hint">Приклад вводу для двовимірної функції -4 5</div>
+            </div>
+            <div class="input-group">
+                <label for="step">Початковий крок</label>
+                <input type="number" id="step" name="step" step=any value='3' required>
+            </div>
+            <div class="input-group">
+                <label for="num">Гранична кількість точок</label>
+                <input type="number" id="num" name="num" value='100' required>
+            </div>
+            <div class="input-group">
+                <label for="epsilon">Допустима похибка для одновимірного метода</label>
+                <input type="number" id="epsilon" name="epsilon" step=any value='0.01' required>
+            </div>
+            <div class="input-group">
+                <label for="epsilon">Допустима похибка для багатовимірного метода</label>
+                <input type="number" id="epsilonm" name="epsilonm" step=any value='0.001' required>
+            </div>
+            <div class="input-group">
+                <label for="delta">Відстань точок від центру інтервалу</label>
+                <input type="number" id="delta" name="delta" step=any value='0.001'>
+                <div class="input-hint">Для метода дихотомії</div>
+            </div>
+            <div class="input-group">
+                <select required name="mult-method" id="mult-method">
+                    <option disabled selected value>Оберіть багатовимірний метод</option>
+                    <option value="steepest" selected>Метод найшвидшого списку</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <select required name="method" id="method" class="method">
+                    <option disabled value>Оберіть одновимірний метод</option>
+                    <option value="metDichotomyM" selected>Метод дихотомії</option>
+                    <option value="metD2M">Метод ділення навпіл</option>
+                    <option value="metGoldenSectionM">Метод золотого перетину</option>
+                    <option value="metStepAdaptationM">Метод адаптації кроку</option>
+                    <option value="metI3p4M">Метод кубічної інтерполяції з чотирма точками</option>
+                </select>
+                <div class="input-hint">На основі цього метода працюватиме багатовимірний</div>
+            </div>
+            <button class="primary btn" type="submit">Розрахувати</button>
+            <pre id="console"></pre>
+        </form>
+    </div>
 
 </body>
 

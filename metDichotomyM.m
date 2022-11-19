@@ -1,4 +1,4 @@
-function [P,F,i,u,fu] = metDichotomy(fun,P,F,i,a,b,d,e)
+function [P,F,i,u,fu] = metDichotomyM(fun,P,F,i,a,b,d,e,X,D)
 % Метод дихотомії
 % Вхідні параметри:
 % fun - підпрограма обчислення функції
@@ -20,13 +20,15 @@ line2sn(35)
 while true
     c = (a + b)/2; % середина інтервалу
     u = c - d;
-    fu = fun(u);
+    Y = X + u*D;
+    fu = fun(Y);
+    i = i + 1; P(:,i) = Y; F(i) = fu;
+    displ([i2s5(i)   r2s10(u - a)    r2s10(fu)   v2s(Y)])
     v = c + d;
-    fv = fun(v);
-    i = i + 1; P(i) = u; F(i) = fu;
-    displ([i2s5(i)   r2s10(u - a)    r2s10(fu)   r2s10(u)])
-    i = i + 1; P(i) = v; F(i) = fv;
-    displ([i2s5(i)   r2s10(v - a)    r2s10(fv)   r2s10(v)])
+    Y = X + v*D;
+    fv = fun(Y);
+    i = i + 1; P(:,i) = Y; F(i) = fv;
+    displ([i2s5(i)   r2s10(v - a)    r2s10(fv)   v2s(Y)])
     if v - a <= e
         break
     end

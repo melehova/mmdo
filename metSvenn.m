@@ -15,7 +15,7 @@ function [P,F,i,a,b,c,fa,fb,fc] = ...
 % c, fc - внутрішня точка інтервала
 displ('  Метод Свена')
 line2sn(35)
-displ('      i       L       fx      x')
+displ('    i  L        fx         x')
 line2sn(35)
 P = zeros(1,N);
 F = P;
