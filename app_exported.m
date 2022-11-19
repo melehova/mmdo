@@ -102,7 +102,6 @@ classdef app_exported < matlab.apps.AppBase
                 content = [content tline];
             end
             app.HTML.Data = jsonencode(struct('btnClicked', false,'funcType', htmlData.funcType, 'text', content));
-            app.HTML.Data
             fclose(fileID);      
         end
     end
