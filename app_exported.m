@@ -61,7 +61,7 @@ classdef app_exported < matlab.apps.AppBase
                                 % [P,F,i,a,b,c,fa,fb,fc] = SwanM(f,P,F,i,x0,d);
                                 % [P,F,i,u,fx] = metDichotomyM(f, P, F, i, a ,b,delta,E1,x0,d);
                                 s = u*d; x0 = x0 + s; ns = norm(s);
-                                displ('Метод наискорейшого спуска')
+                                displ('Метод найшвидшого спуска')
                                 line2sn(45);
                                 displ('     k     ns      fx       x1        x2')
                                 line2sn(45);
