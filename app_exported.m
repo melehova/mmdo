@@ -11,7 +11,7 @@ classdef app_exported < matlab.apps.AppBase
 
         % Data changed function: HTML
         function HTMLDataChanged(app, ~)
-            htmlData = jsondecode(app.HTML.Data)
+            htmlData = jsondecode(app.HTML.Data);
             % formData
             fD = htmlData.formData;
             fun = str2func(strcat('@(x)',fD.function));
@@ -61,7 +61,7 @@ classdef app_exported < matlab.apps.AppBase
                                 % [P,F,i,a,b,c,fa,fb,fc] = SwanM(f,P,F,i,x0,d);
                                 % [P,F,i,u,fx] = metDichotomyM(f, P, F, i, a ,b,delta,E1,x0,d);
                                 s = u*d; x0 = x0 + s; ns = norm(s);
-                                displ('Метод наискорейшого спуска')
+                                displ('Метод найшвидшого спуска')
                                 line2sn(45);
                                 displ('     k     ns      fx       x1        x2')
                                 line2sn(45);
@@ -102,7 +102,6 @@ classdef app_exported < matlab.apps.AppBase
                 content = [content tline];
             end
             app.HTML.Data = jsonencode(struct('btnClicked', false,'funcType', htmlData.funcType, 'text', content));
-            app.HTML.Data
             fclose(fileID);      
         end
     end
@@ -123,7 +122,7 @@ classdef app_exported < matlab.apps.AppBase
             app.HTML.HTMLSource = 'index.html';
             app.HTML.DataChangedFcn = createCallbackFcn(app, @HTMLDataChanged, true);
             app.HTML.Position = [1 1 842 480];
-            app.HTML.Data = '{"btnClicked":false,"text":null,"funcType":"one-dem"}';
+            app.HTML.Data = '{"btnClicked":false,"text":null,"funcType":"two-dem"}';
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';
