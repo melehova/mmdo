@@ -122,7 +122,7 @@ classdef app_exported < matlab.apps.AppBase
             app.HTML.HTMLSource = 'index.html';
             app.HTML.DataChangedFcn = createCallbackFcn(app, @HTMLDataChanged, true);
             app.HTML.Position = [1 1 842 480];
-            app.HTML.Data = '{"btnClicked":false,"text":null,"funcType":"one-dem"}';
+            app.HTML.Data = '{"btnClicked":false,"text":null,"funcType":"two-dem"}';
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';
