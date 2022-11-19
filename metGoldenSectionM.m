@@ -1,4 +1,4 @@
-function [P,F,i,x,fx] = metGoldenSection(fun,P,F,i,a,b,e)
+function [P,F,i,x,fx] = metGoldenSectionM(fun,P,F,i,a,b,e,X,D)
 % Метод золотого перетину
 % Вхідні параметри:
 % fun - підпрограма обчислення функції
@@ -19,13 +19,15 @@ line2sn(35)
 t = 0.5 * (sqrt(5) - 1);
 h = t * (b - a);
 x = b - h;
-fx = fun(x);
-i = i + 1; P(i) = x; F(i) = fx;
-displ([i2s5(i)   r2s10(b - a)    r2s10(fx)   r2s10(x)])
+Y = X + x*D;
+fx = fun(Y);
+i = i + 1; P(:,i) = Y; F(i) = fx;
+displ([i2s5(i)   r2s10(b - a)    r2s10(fx)   v2s(Y)])
 y = a + h;
-fy = fun(y);
-i = i + 1; P(i) = y; F(i) = fy;
-displ([i2s5(i)   r2s10(b - a)    r2s10(fy)   r2s10(y)])
+Y = X + y*D;
+fy = fun(Y);
+i = i + 1; P(:,i) = Y; F(i) = fy;
+displ([i2s5(i)   r2s10(b - a)    r2s10(fy)   v2s(Y)])
 while true
     if (fx > fy)
         a = x;
@@ -33,18 +35,20 @@ while true
         fx = fy;
         d = b - a;
         y = a + t *d;
-        fy = fun(y);
-        i = i + 1; P(i) = y; F(i) = fy;
-        displ([i2s5(i)   r2s10(b - a)    r2s10(fy)   r2s10(y)])
+        Y = X + y*D;
+        fy = fun(Y);
+        i = i + 1; P(:,i) = y; F(i) = fy;
+        displ([i2s5(i)   r2s10(b - a)    r2s10(fy)   v2s(Y)])
     else
         b = y;
         y = x;
         fy = fx;
         d = b - a;
         x = b - t * d;
-        fx = fun(x);
-        i = i + 1; P(i) = x; F(i) = fx;
-        displ([i2s5(i)   r2s10(b - a)    r2s10(fx)   r2s10(x)])
+        Y = X + x*D;
+        fx = fun(Y);
+        i = i + 1; P(:,i) = Y; F(i) = fx;
+        displ([i2s5(i)   r2s10(b - a)    r2s10(fx)   v2s(Y)])
     end
     if (d <= e)
         break

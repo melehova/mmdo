@@ -1,4 +1,4 @@
-function [P,F,i,x,fx] = metStepAdaptation(fun,x,h,e,N)
+function [P,F,i,x,fx] = metStepAdaptationM(fun,P,F,i,h,e,X,D)
 % Метод адаптації кроку
 % Вхідні параметри:
 % fun - підпрограма обчислення функції
@@ -14,17 +14,18 @@ displ(' Метод адаптації кроку')
 line2sn(35)
 displ('    i  L        fx         x')
 line2sn(35)
-P = zeros(1,N);
-F = P;
-r = 0; i = 0;
-fx = fun(x);
-i = i + 1; P(i) = x; F(i) = fx;
-displ([i2s5(i)   r2s10(h)    r2s10(fx)   r2s10(x)])
+r = 0;
+x = h;
+Y = X + x*D;
+fx = fun(Y);
+i = i + 1; P(:,i) = Y; F(i) = fx;
+displ([i2s5(i) r2s10(h) r2s10(fx) v2s(Y)])
 while true
     y = x + h;
-    fy = fun(y);
-    i = i + 1; P(i) = y; F(i) = fy;
-    displ([i2s5(i)   r2s10(h)    r2s10(fy)   r2s10(y)])
+    Y = X + y*D;
+    fy = fun(Y);
+    i = i + 1; P(:,i) = Y; F(i) = fy;
+    displ([i2s5(i) r2s10(h) r2s10(fy) v2s(Y)])
     if (fy >= fx)
         if (r == 2)
             r = 0.25;
