@@ -11,7 +11,7 @@ classdef app_exported < matlab.apps.AppBase
 
         % Data changed function: HTML
         function HTMLDataChanged(app, ~)
-            htmlData = jsondecode(app.HTML.Data)
+            htmlData = jsondecode(app.HTML.Data);
             % formData
             fD = htmlData.formData;
             fun = str2func(strcat('@(x)',fD.function));
