@@ -20,12 +20,11 @@ function Graph3( fun, P, F )
     figure(1)
     hold on
     set(gcf,'Color','w')
-    colormap(C);
-    surf(xx,yy,ff)
+    colormap(C); surf(xx,yy,ff)
     hold on
     plot3(P(1,:),P(2,:),F,'go-')
     plot3(P(1,1),P(2,1),F(1),'ro')
-    plot3(P(1,N),P(2,N),F(N),'yo','MarkerSize',14)
+    plot3(P(1,N),P(2,N),F(N),'yo','MarkerSize',16)
     axis([a(1),b(1),a(2),b(2)])
     xlabel('\itx\rm_1'), ylabel('\itx\rm_2')
     zlabel('\itf','Rotation',90)

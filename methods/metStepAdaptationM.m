@@ -14,16 +14,12 @@ displ(' Метод адаптації кроку')
 line2sn(35)
 displ('    i  L        fx         x')
 line2sn(35)
-r = 0;
-x = h;
-Y = X + x*D;
-fx = fun(Y);
+r = 0; x = h;
+Y = X + x*D; fx = fun(Y);
 i = i + 1; P(:,i) = Y; F(i) = fx;
 displ([i2s5(i) r2s10(h) r2s10(fx) v2s(Y)])
 while true
-    y = x + h;
-    Y = X + y*D;
-    fy = fun(Y);
+    y = x + h; Y = X + y*D; fy = fun(Y);
     i = i + 1; P(:,i) = Y; F(i) = fy;
     displ([i2s5(i) r2s10(h) r2s10(fy) v2s(Y)])
     if (fy >= fx)
@@ -33,8 +29,7 @@ while true
             r = -0.5;
         end
     else
-        x = y;
-        fx = fy;
+        x = y; fx = fy;
         if (r >= 0.5)
             r = 2;
         else 
