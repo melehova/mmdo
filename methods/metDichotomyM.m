@@ -18,15 +18,11 @@ line2sn(35)
 displ('    i  L        fx         x')
 line2sn(35)
 while true
-    c = (a + b)/2; % середина інтервалу
-    u = c - d;
-    Y = X + u*D;
-    fu = fun(Y);
+    c = (a + b)/2; u = c - d;
+    Y = X + u*D; fu = fun(Y);
     i = i + 1; P(:,i) = Y; F(i) = fu;
     displ([i2s5(i)   r2s10(u - a)    r2s10(fu)   v2s(Y)])
-    v = c + d;
-    Y = X + v*D;
-    fv = fun(Y);
+    v = c + d; Y = X + v*D; fv = fun(Y);
     i = i + 1; P(:,i) = Y; F(i) = fv;
     displ([i2s5(i)   r2s10(v - a)    r2s10(fv)   v2s(Y)])
     if v - a <= e
