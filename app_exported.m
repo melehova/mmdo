@@ -20,21 +20,18 @@ classdef app_exported < matlab.apps.AppBase
             fileID = fopen('temp.txt', 'w');
             switch htmlData.funcType
                 case 'mult-dem'
+                    x0 = fD.start.'; N = fD.num; n = length(x0);
+                    P = zeros(n,N); F = zeros(1,N); fx = fun(x0);
+                    k = 0; i = 0; ns = 1;
                     switch fD.multMethod
-                        case 'steepest'
-                            x0 = fD.start.';
-                            N = fD.num;
-                            n = length(x0);
-                            P = zeros(n,N); F = zeros(1,N);
-                            fx = fun(x0);
-                            k = 0;
-                            i = 1; P(:,i) = x0; F(i) = fx;
-                            ns = 1;
-                            % E1 = E;
-                            g = Grad1(x0, fx,fun);
+                        case 'metNewton'
+                            [P,F,i,x,fx] = metNewton(fun,P,F,i,x0,fD.epsilonm,fD.delta,fD.epsilon,fD.step,fD.method);
+                            Graph3(fun,P,F)
+                        otherwise
+                            gx = Grad1(x0,fx,fun);
+                            d = -gx;
                             while ns > fD.epsilonm 
                                 k = k + 1;
-                                d = -g;
                                 nd = norm(d);
                                 if nd > 0
                                     dn = d/nd;
@@ -43,50 +40,33 @@ classdef app_exported < matlab.apps.AppBase
                                     Graph3(fun,P,F)
                                     return
                                 end
-                                switch fD.method
-                                    case 'metStepAdaptationM'
-                                        [P,F,i,u,fx] = metStepAdaptationM(fun,P,F,i,fD.step,fD.epsilon,x0,d);
-                                    case 'metDichotomyM'
-                                        [P,F,i,a,b] = SwanM(fun,P,F,i,x0,d);
-                                        [P,F,i,u,fx] = metDichotomyM(fun,P,F,i,a,b,fD.delta,fD.epsilon,x0,d);
-                                    case 'metI3p4M'
-                                        [P,F,i,a,b,c,fa,fb,fc] = SwanM(fun,P,F,i,x0,d);
-                                        % Виклик метода кубічної інтерполяції з 4 точками
-                                        [P,F,i,u,fx] = metI3p4M(fun,P,F,i,a,b,c,fa,fb,fc,fD.epsilon,x0,d);
-                                    otherwise
-                                        method = str2func(fD.method);
-                                        [P,F,i,a,b] = SwanM(fun,P,F,i,x0,d);
-                                        [P,F,i,u,fx] = method(fun,P,F,i,a,b,fD.epsilon,x0,d);
-                                end
-                                % [P,F,i,a,b,c,fa,fb,fc] = SwanM(f,P,F,i,x0,d);
-                                % [P,F,i,u,fx] = metDichotomyM(f, P, F, i, a ,b,delta,E1,x0,d);
+                                [P,F,i,u,fx] = argminM(fD.method,fun,P,F,i,fD.delta,fD.epsilon,fD.step,x0,d);
                                 s = u*d; x0 = x0 + s; ns = norm(s);
-                                displ('Метод найшвидшого спуска')
+                                gy = gx;
+                                gx = Grad1(x0,fx,fun);                        
+                                switch fD.multMethod
+                                    case 'steepest'
+                                        displ('Метод найшвидшого спуску')
+                                        d = -gx;
+                                    case 'metFletcherReeves'
+                                        displ('Метод Флетчера-Рівса')
+                                        B = (gx.'*gx)./(gy.'*gy); % flet
+                                        d = -gx+B(2,2)*d;
+                                    case 'metPolackRibier'
+                                        displ("Метод Полака-Рів'єра")
+                                        B = gx.'*(gx-gy)./(gy.'*gy); % pol
+                                        d = -gx+B(2,2)*d;
+                                end
                                 line2sn(45);
                                 displ('     k     ns      fx       x1        x2')
                                 line2sn(45);
                                 displ([i2s5(k) r2s10(ns) r2s10(fx) v2s(x0)])
                                 line2sn(45);
-                                g = Grad1(x0,fx,fun);
+                                Graph3(fun,P,F)
                             end
-                            Graph3(fun,P,F)
                     end
                 case 'one-dem'
-                    switch fD.method
-                        case 'metStepAdaptation'
-                            [P,F,i,x,fx] = metStepAdaptation(fun,fD.start,fD.step,fD.epsilon,fD.num);
-                        case 'metDichotomy'
-                            [P,F,i,a,b] = metSvenn(fun,fD.start,fD.step,fD.num);
-                            [P,F,i,x,fx] = metDichotomy(fun,P,F,i,a,b,fD.delta,fD.epsilon);
-                        case 'metI3p4'
-                            [P,F,i,a,b,c,fa,fb,fc] = metSvenn(fun,fD.start,fD.step,fD.num);
-                            % Виклик метода кубічної інтерполяції з 4 точками
-                            [P,F,i,x,fx] = metI3p4(fun,P,F,i,a,b,c,fa,fb,fc,fD.epsilon);
-                        otherwise
-                            method = str2func(fD.method);
-                            [P,F,i,a,b] = metSvenn(fun,fD.start,fD.step,fD.num);
-                            [P,F,i,x,fx] = method(fun,P,F,i,a,b,fD.epsilon);
-                    end
+                    [P,F,i,x,fx] = argmin(met,fun,P,F,i,fD.delta,fD.epsilon,fD.step,fD.start,fD.num);
                     P(i+1:fD.num) = [];F(i+1:fD.num) = [];
                     displ(['fx = ' num2str(fx) ' x = ' num2str(x)])
                     [dfx,d2fx] = der2(fun,x,fx);
@@ -115,14 +95,14 @@ classdef app_exported < matlab.apps.AppBase
             % Create UIFigure and hide until all components are created
             app.UIFigure = uifigure('Visible', 'off');
             app.UIFigure.Position = [100 100 841 480];
-            app.UIFigure.Name = 'Matlab App Veronika Melekhova';
+            app.UIFigure.Name = 'Matlab App Veronika Melekhova 6';
 
             % Create HTML
             app.HTML = uihtml(app.UIFigure);
             app.HTML.HTMLSource = 'index.html';
             app.HTML.DataChangedFcn = createCallbackFcn(app, @HTMLDataChanged, true);
             app.HTML.Position = [1 1 842 480];
-            app.HTML.Data = '{"btnClicked":false,"text":null,"funcType":"two-dem"}';
+            app.HTML.Data = '{"btnClicked":false,"text":null,"funcType":"mult-dem"}';
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';
