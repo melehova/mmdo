@@ -1,7 +1,7 @@
 function [ P,F,i,a,b,c,fa,fb,fc ] = SwanM(f,P,F,i,X,D)
     displ('Метод Свенна')
     line2sn(35)
-    displ('     k     ns         fx    x1        x2')
+    displ('     i     h         fx    x1        x2')
     line2sn(35)
     fc = f(X);c = 0; h = 1;
     i = i + 1; P(:,i) = X; F(i) = fc;
