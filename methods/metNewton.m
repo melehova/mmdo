@@ -1,6 +1,4 @@
 function [P,F,i,X,fx] = metNewton(fun,P,F,i,X,E,delta,epsilon,step,method1)
-%UNTITLED8 Summary of this function goes here
-%   Detailed explanation goes here
     k = 0;
     while true
         k = k + 1;

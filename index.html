@@ -180,6 +180,7 @@
             
             htmlComponent.addEventListener("DataChanged", function (event) {
                 const data = JSON.parse(htmlComponent.Data)
+                document.querySelector(`button#${data.funcType}`).classList.add('active')
                 forms.forEach(f => {
                     if (f.name === data.funcType) {
                         f.classList.add('active')
@@ -227,6 +228,16 @@
                 })
             })
 
+            const multMethodM = document.querySelector("form[name='mult-dem'] select#mult-method")
+            
+            multMethodM.addEventListener('change', (e) => {
+                if (e.target.value === 'metHookeJeeves') {
+                    document.querySelector(`form[name='mult-dem'] select#method`).removeAttribute('required')
+                } else {
+                    document.querySelector(`form[name='mult-dem'] select#method`).setAttribute('required','required')
+                }
+            })
+
            
             function updateData(newData) {
                 htmlComponent.Data = JSON.stringify(newData);
@@ -254,7 +265,6 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-
             const forms = document.querySelectorAll('form')
             forms.forEach(form => {
                 form.addEventListener('submit', (event) => {
@@ -293,6 +303,17 @@
                 })
             })
 
+            const multMethodM = document.querySelector("form[name='mult-dem'] select#mult-method")
+            
+            multMethodM.addEventListener('change', (e) => {
+                if (e.target.value === 'metHookeJeeves') {
+                    document.querySelector(`form[name='mult-dem'] select#method`).removeAttribute('required')
+                } else {
+                    document.querySelector(`form[name='mult-dem'] select#method`).setAttribute('required','required')
+                }
+            })
+            
+
             const headButtons = document.querySelectorAll('.btn-header')
 
             headButtons.forEach(btn => {
@@ -323,7 +344,7 @@
         <div class="header">
             <h1>Мінімізація</h1>
             <div class="btn-group">
-                <button class="btn-header active" id="two-dem">Двовимірна</button>
+                <button class="btn-header" id="two-dem">Двовимірна</button>
                 <button class="btn-header" id="mult-dem">Багатовимірна</button>
             </div>
         </div>
@@ -403,19 +424,24 @@
             <div class="input-group">
                 <select required name="mult-method" id="mult-method">
                     <option disabled selected value>Оберіть багатовимірний метод</option>
-                    <option value="steepest" selected>Метод найшвидшого спуску</option>
+                    <option value="steepest">Метод найшвидшого спуску</option>
+                    <option value="metFletcherReeves">Метод Флетчера-Рівса</option>
+                    <option value="metPolackRibier">Метод Полака-Рів'єра</option>
+                    <option value="metNewton">Метод Ньютона з одновимірним пошуком</option>
+                    <option value="metHookeJeeves">Метод Хука-Дживса</option>
                 </select>
             </div>
             <div class="input-group">
                 <select required name="method" id="method" class="method">
-                    <option disabled value>Оберіть одновимірний метод</option>
-                    <option value="metDichotomyM" selected>Метод дихотомії</option>
+                    <option disabled value selected>Оберіть одновимірний метод</option>
+                    <option value="metDichotomyM">Метод дихотомії</option>
                     <option value="metD2M">Метод ділення навпіл</option>
                     <option value="metGoldenSectionM">Метод золотого перетину</option>
                     <option value="metStepAdaptationM">Метод адаптації кроку</option>
                     <option value="metI3p4M">Метод кубічної інтерполяції з чотирма точками</option>
                 </select>
                 <div class="input-hint">На основі цього метода працюватиме багатовимірний</div>
+                <div class="input-hint">Не потрібен для метода Хука-Дживса</div>
             </div>
             <button class="primary btn" type="submit">Розрахувати</button>
             <pre id="console"></pre>

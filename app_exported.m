@@ -18,6 +18,9 @@ classdef app_exported < matlab.apps.AppBase
             % test fun 
             % fun([2 4]);
             fileID = fopen('temp.txt', 'w');
+            x0 = fD.start.'; N = fD.num; n = length(x0);
+            P = zeros(n,N); F = zeros(1,N); fx = fun(x0);
+            k = 0; i = 0; ns = 1;
             switch htmlData.funcType
                 case 'mult-dem'
                     x0 = fD.start.'; N = fD.num; n = length(x0);
@@ -26,6 +29,11 @@ classdef app_exported < matlab.apps.AppBase
                     switch fD.multMethod
                         case 'metNewton'
                             [P,F,i,x,fx] = metNewton(fun,P,F,i,x0,fD.epsilonm,fD.delta,fD.epsilon,fD.step,fD.method);
+                            Graph3(fun,P,F)
+                        case 'metHookeJeeves'
+                            [P,F,i,x,fx] = metHookeJeeves(fun,P,F,i,x0,fD.epsilonm,fD.step);
+                            P(:,i+1:fD.num) = [];F(:,i+1:fD.num) = [];
+
                             Graph3(fun,P,F)
                         otherwise
                             gx = Grad1(x0,fx,fun);
@@ -65,8 +73,8 @@ classdef app_exported < matlab.apps.AppBase
                                 Graph3(fun,P,F)
                             end
                     end
-                case 'one-dem'
-                    [P,F,i,x,fx] = argmin(met,fun,P,F,i,fD.delta,fD.epsilon,fD.step,fD.start,fD.num);
+                case 'two-dem'
+                    [P,F,i,x,fx] = argmin(fD.method,fun,P,F,i,fD.delta,fD.epsilon,fD.step,fD.start,fD.num);
                     P(i+1:fD.num) = [];F(i+1:fD.num) = [];
                     displ(['fx = ' num2str(fx) ' x = ' num2str(x)])
                     [dfx,d2fx] = der2(fun,x,fx);
@@ -95,7 +103,7 @@ classdef app_exported < matlab.apps.AppBase
             % Create UIFigure and hide until all components are created
             app.UIFigure = uifigure('Visible', 'off');
             app.UIFigure.Position = [100 100 841 480];
-            app.UIFigure.Name = 'Matlab App Veronika Melekhova 6';
+            app.UIFigure.Name = 'Matlab App Veronika Melekhova 7';
 
             % Create HTML
             app.HTML = uihtml(app.UIFigure);
