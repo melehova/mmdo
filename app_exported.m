@@ -103,7 +103,7 @@ classdef app_exported < matlab.apps.AppBase
             % Create UIFigure and hide until all components are created
             app.UIFigure = uifigure('Visible', 'off');
             app.UIFigure.Position = [100 100 841 480];
-            app.UIFigure.Name = 'Matlab App Veronika Melekhova 7';
+            app.UIFigure.Name = 'Matlab App Veronika Melekhova ';
 
             % Create HTML
             app.HTML = uihtml(app.UIFigure);
